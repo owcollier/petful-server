@@ -8,6 +8,8 @@ const {PORT, CLIENT_ORIGIN} = require('./config');
 const {dbConnect} = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
+const Queue = require('./queue');
+
 const app = express();
 
 const cats = [
@@ -70,6 +72,18 @@ const dogs = [
   }
 ];
 
+const catsQueue = new Queue();
+
+catsQueue.enqueue(cats[0]);
+catsQueue.enqueue(cats[1]);
+catsQueue.enqueue(cats[2]);
+
+const dogsQueue = new Queue();
+
+dogsQueue.enqueue(dogs[0]);
+dogsQueue.enqueue(dogs[1]);
+dogsQueue.enqueue(dogs[2]);
+
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
     skip: (req, res) => process.env.NODE_ENV === 'test'
@@ -84,22 +98,22 @@ app.use(
 
 app.get('/api/cat', (req, res) => {
   //show the cat that is next in line to be adopted
-  return res.json(cats[0]);
+  return res.json(catsQueue.first.value);
 });
 
 app.get('/api/dog', (req, res) => {
-  return res.json(dogs[0]);
+  return res.json(dogsQueue.first.value);
 });
 
 app.delete('/api/cat', (req, res) => {
-  const adopted = cats[0];
-  cats.splice(0, 1);
+  const adopted = catsQueue.first.value;
+  catsQueue.dequeue();
   return res.json(`${adopted.name} successfully adopted!`);
 });
 
 app.delete('/api/dog', (req, res) => {
-  const adopted = dogs[0];
-  dogs.splice(0, 1);
+  const adopted = dogsQueue.first.value;
+  dogsQueue.dequeue();
   return res.json(`${adopted.name} successfully adopted!`);
 });
 
