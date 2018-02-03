@@ -1,45 +1,27 @@
-# Thinkful Backend Template
+# Petful
 
-A template for developing and deploying Node.js apps.
+-Backend for the Petful app, whose client repo is located [here](https://github.com/owcollier/petful-client)
 
-## Getting started
+-Working example of the server deployed on [Heroku](https://petful-wade.herokuapp.com): append */api/cat* or */api/dog* to url and refresh to see a JSON representation of data
 
-### Setting up a project
+##What's going on?
 
-* Move into your projects directory: `cd ~/YOUR_PROJECTS_DIRECTORY`
-* Clone this repository: `git clone https://github.com/Thinkful-Ed/backend-template YOUR_PROJECT_NAME`
-* Move into the project directory: `cd YOUR_PROJECT_NAME`
-* Install the dependencies: `npm install`
-* Create a new repo on GitHub: https://github.com/new
-    * Make sure the "Initialize this repository with a README" option is left unchecked
-* Update the remote to point to your GitHub repository: `git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME`
+Petful was designed around the idea that pet adoption should operate according to a FIFO(first in, first out) structure. With so many pets up for adoption and in need of a new family, why should we be choosy about who we adopt? The older dog at the shelter may not be as cute and cuddly as the puppy next door, but he or she deserves your love and care too!
 
-### Working on the project
+As a result, Petful delivers its pets-for-adoption in a queue data structure.
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Run the development task: `npm start`
-    * Starts a server running at http://localhost:8080
-    * Automatically restarts when any of your files change
+The petful API uses two types of endpoints:
 
-## Databases
+1.GET
+&
+2.DELETE
 
-By default, the template is configured to connect to a MongoDB database using Mongoose.  It can be changed to connect to a PostgreSQL database using Knex by replacing any imports of `db-mongoose.js` with imports of `db-knex.js`, and uncommenting the Postgres `DATABASE_URL` lines in `config.js`.
+Get requests to display pets client-side simply peek at the first item of a given pet queue. V1 of Petful generates this data statically each time you run the server, but further iterations of Petful would ideally pull pet info from local animal shelters and display accordingly: the longer the pet has been at the shelter, the sooner you'll see that pet returned via get request!
 
-## Deployment
 
-Requires the [Heroku CLI client](https://devcenter.heroku.com/articles/heroku-command-line).
+Delete requests remove the first pet of a given pet queue from its queue.
+This means that a subsequent get request will receive the pet that used to be second in line, whose data was stored in the next property of the previous first of the queue. V1 of Petful simply removes the pet from the queue upon making the delete request for demonstration of functionality.
 
-### Setting up the project on Heroku
+##Technologies used to create Petful:
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Create the Heroku app: `heroku create PROJECT_NAME`
-
-* If your backend connects to a database, you need to configure the database URL:
-    * For a MongoDB database: `heroku config:set DATABASE_URL=mongodb://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
-    * For a PostgreSQL database: `heroku config:set DATABASE_URL=postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
-
-* If you are creating a full-stack app, you need to configure the client origin: `heroku config:set CLIENT_ORIGIN=https://www.YOUR_DEPLOYED_CLIENT.com`
-
-### Deploying to Heroku
-
-* Push your code to Heroku: `git push heroku master`
+- Node.js & Express
